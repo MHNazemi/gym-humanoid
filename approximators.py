@@ -62,16 +62,15 @@ class Policy_Network(nn.Module):
 
         shared_features = self.shared_net(observation.float())
         action_means = self.policy_mean_net(shared_features)
-        action_stddevs = torch.log(1 + torch.exp(self.policy_stddev_net(shared_features))
-        )
+        action_stddevs = torch.log(1 + torch.exp(self.policy_stddev_net(shared_features)))
 
         return action_means, action_stddevs
 
 
-class Value_Network(nn.Module):
+class Action_State_Network(nn.Module):
 
     """
-    Value Network"
+    Value Network
     """
 
     def __init__(self, state_dim: int, action_dim: int):
@@ -88,17 +87,37 @@ class Value_Network(nn.Module):
         # print(device)
         
         hidden_space1 = 256
-        hidden_space2 = 32 
+        hidden_space2 = 64 
     
         # Q(s,a) value
         self.Q = nn.Sequential(
             nn.Linear(state_dim+action_dim, hidden_space1),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(hidden_space1, hidden_space2),
-            nn.Tanh(),
-            nn.Linear(hidden_space2,1)
+            nn.ReLU(),
+            nn.Linear(hidden_space2,action_dim)
         )
 
+#         state_embedding_network = nn.Sequential(
+#             nn.Linear(state_dim, hidden_dim),
+#             nn.ReLU(),
+#             nn.Linear(hidden_dim, embedding_dim)
+# )       
+#         action_embedding_network = nn.Sequential(
+#             nn.Linear(action_dim, hidden_dim),
+#             nn.ReLU(),
+#             nn.Linear(hidden_dim, embedding_dim)
+#         )
+
+#         merged_input = torch.cat((state_embedding, action_embedding), dim=1)
+#         merged_input = torch.cat((state_embedding, action_embedding), dim=1)
+
+#         q_network = nn.Sequential(
+#             nn.Linear(embedding_dim * 2, hidden_dim),
+#             nn.ReLU(),
+#             nn.Linear(hidden_dim, q_value_dim)
+#         )
+        
       
 
     def forward(self, observation: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
