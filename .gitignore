@@ -1,1 +1,5 @@
 _venv*
+*.pt
+.vscode/launch.json
+*.pyc
+*.zip
